@@ -54,7 +54,7 @@ function Fly()
     bv:Destroy()
 	bv = nil
     plr.Character.Humanoid.PlatformStand = false
-	game.StarterGui:SetCore("SendNotification", {Title="Fly Deactivated"; Text="WeAreDevs.net"; Duration=1;})
+	game.StarterGui:SetCore("SendNotification", {Title="Fly Deactivated"; Text="sheesh"; Duration=1;})
 end
 
 --Controls

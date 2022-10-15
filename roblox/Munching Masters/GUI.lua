@@ -15,6 +15,9 @@ getgenv().autoKing      = false
 getgenv().autoRank      = false
 getgenv().autoTpKill    = false
 
+-- locals
+local totalPlayersKilled = 0
+
 -- Paths
 local remote = game:GetService("ReplicatedStorage").Events.Player
 local workspace = game:GetService("Workspace")
@@ -133,20 +136,25 @@ end
 function autoTpKill()
     spawn(function ()
         while wait() do
-            if not getgenv().autoTpKill then break end
-            for i,v in pairs(game.Players:GetChildren()) do
-                print('For loop I: ', i )
-                print('For loop V: ', v )
-                if v ~= player then
-                if player.Character.HumanoidRootPart.CFrame and v.Character.Head then
-                    player.Character.HumanoidRootPart.CFrame = v.Character.Head.CFrame * CFrame.new(0,0,0)
-                    v.Character:WaitForChild("Humanoid").Died:Connect(function()
-                        print(v , ' has died!')
-                    end)
+            if getgenv().autoTpKill then
+                for i, v in pairs(game.Players:GetPlayers()) do
+                    if not getgenv().autoTpKill then break end
+                    -- repeat wait() print("Hello!") until v.Character and v.Character.Parent ~= nil and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health >= 0
+                    if v.Name ~= player.Name then
+                    -- if v.Character and v.Character.Parent ~= nil and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health >= 0 then
+                        print('Attacking: '..v.Name.." | "..v.UserId)
+                        print('Total killed: ', totalPlayersKilled)
+                        totalPlayersKilled += 1
+                        repeat wait(0.1)
+                        remote.Action:FireServer('Punch')
+                        player.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,0)
+                        until v.Character.Humanoid.Health <= 0 or v.Character.HumanoidRootPart.CFrame == nil or  player.Character.HumanoidRootPart.CFrame == nil or getgenv().autoTpKill == false    
+                    -- end 
+                    end
                 end
             end
         end
-    end
+    end)
 end
 
 -- Library
@@ -238,6 +246,12 @@ end)
 
 fighting:Button("Set low hipheight",function()
 
+end)
+
+destroy:Button("DESTROY EVERYTHING",function()
+    for i, v in pairs(workspace:GetChildren()) do
+        if v.Name ~= "Players" and v.Name ~= "Safezone" then v:Destroy() end
+    end
 end)
 
 destroy:Button("Sell pads",function()
