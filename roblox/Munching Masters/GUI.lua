@@ -1,3 +1,6 @@
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
 -- Booleans
 getgenv().autoAction    = false
 getgenv().autoEat       = false
@@ -39,15 +42,21 @@ function touchInterest(part)
     firetouchinterest(playerHead, part, 1)
 end
 
-function getCurrentPlayerPosition() 
-    if player.Character then
-        return player.Character.HumanoidRootPart.Position
-    end
-        return false
+function getRoot(char)
+	local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+	return rootPart
 end
 
-function teleportTo(x, y, z)
-    player.Character.HumanoidRootPart.CFrame = CFrame.new(x, y, z);
+function tools(plr)
+	if plr:FindFirstChildOfClass("Backpack"):FindFirstChildOfClass('Tool') or plr.Character:FindFirstChildOfClass('Tool') then
+		return true
+	end
+end
+
+function r15(plr)
+	if plr.Character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15 then
+		return true
+	end
 end
 
 -- Spawn functions
@@ -139,17 +148,20 @@ function autoTpKill()
             if getgenv().autoTpKill then
                 for i, v in pairs(game.Players:GetPlayers()) do
                     if not getgenv().autoTpKill then break end
-                    -- repeat wait() print("Hello!") until v.Character and v.Character.Parent ~= nil and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health >= 0
                     if v.Name ~= player.Name then
-                    -- if v.Character and v.Character.Parent ~= nil and v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health >= 0 then
-                        print('Attacking: '..v.Name.." | "..v.UserId)
-                        print('Total killed: ', totalPlayersKilled)
-                        totalPlayersKilled += 1
-                        repeat wait(0.1)
+                        local playerLoaded = player.Character or player.CharacterAdded:Wait()
+                        local playerHumanoidLoaded = playerLoaded:WaitForChild("Humanoid")
+                        repeat wait()
                         remote.Action:FireServer('Punch')
-                        player.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,0)
-                        until v.Character.Humanoid.Health <= 0 or v.Character.HumanoidRootPart.CFrame == nil or  player.Character.HumanoidRootPart.CFrame == nil or getgenv().autoTpKill == false    
-                    -- end 
+                        if v.Character ~= nil and playerHumanoidLoaded and v.Character.HumanoidRootPart ~= nil then 
+                            player.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,0)
+                        end
+                        until v.Character == nil or v.Character.Humanoid.Health <= 0 or v.Character.HumanoidRootPart.CFrame == nil or player.Character.HumanoidRootPart.CFrame == nil or getgenv().autoTpKill == false
+                        totalPlayersKilled += 1
+                        print(totalPlayersKilled)
+                    else
+                        wait(0.1)
+                        print('No humanoid found!, switching to other player..', v.Name)
                     end
                 end
             end
@@ -241,6 +253,9 @@ fighting:Toggle("Auto TP Kill",function(bool)
     getgenv().autoTpKill = bool
     if bool then 
         autoTpKill();
+        player.CharacterAdded:connect(function()
+            autoTpKill();
+        end)
     end
 end)
 
@@ -249,8 +264,11 @@ fighting:Button("Set low hipheight",function()
 end)
 
 destroy:Button("DESTROY EVERYTHING",function()
-    for i, v in pairs(workspace:GetChildren()) do
-        if v.Name ~= "Players" and v.Name ~= "Safezone" then v:Destroy() end
+    if workspace.World then
+        workspace.World:Destroy()
+    end
+    if workspace.Edible then
+        workspace.Edible:Destroy()
     end
 end)
 
@@ -322,3 +340,25 @@ misc:Button("Redeem All Codes",function()
 end)
 
 misc:DestroyGui()
+
+-- local T = getRoot(Players.LocalPlayer.Character)
+
+-- local c=workspace.CurrentCamera.CFrame
+-- for i,v in pairs(game.Players:GetPlayers()) do
+--     if v.Name:lower() == "bartvanmV2" then
+--         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0,-100,0)
+--         workspace.CurrentCamera.CFrame=c*CFrame.Angles(math.rad(v.Character.HumanoidRootPart.CFrame.LookVector.X),math.rad(v.Character.HumanoidRootPart.CFrame.LookVector.Y),0)
+--     end
+-- end
+-- FLYING = true
+-- local BG = Instance.new('BodyGyro')
+-- local BV = Instance.new('BodyVelocity')
+-- BG.P = 9e4
+-- BG.Parent = T
+-- BV.Parent = T
+-- BG.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+
+
+-- BV.velocity = Vector3.new(0, 0, 0)
+-- BV.maxForce = Vector3.new(9e9, 9e9, 9e9)
+-- Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
