@@ -22,13 +22,11 @@ local data = game:GetService('ReplicatedStorage').Functions.Data.GetPlayer:Invok
 local totalPlayersKilled = 0
 
 -- Paths
-local remote = game:GetService('ReplicatedStorage').Events.Player
-local workspace = game:GetService('Workspace')
-local actionModule = require(game:GetService('Players').LocalPlayer.PlayerScripts.Client.Action)
+local rm = game:GetService('ReplicatedStorage').Events.Player
+local ws = game:GetService('Workspace')
 
 -- Player
-local player = game.Players.LocalPlayer
-local playerHead = player.Character.Head
+local lp = game.Players.LocalPlayer
 
 -- Arrays
 local foods = {'Bacon', 'Pizza', 'Watermelon', 'Hotdog', 'Pie', 'Cookie', 'Pancakes', 'Donut', 'Ice Cream', 'Sugar Cookie', 'Turkey Leg', 'Cake', 'Burger'}
@@ -38,8 +36,8 @@ local codes = {'food', '50m', 'hungry', '2m', 'release', 'scotty', 'tofuu', 'BAR
 
 -- Helper Functions
 function touchInterest(part)
-    firetouchinterest(playerHead, part, 0)
-    firetouchinterest(playerHead, part, 1)
+    firetouchinterest(lp.Character.Head, part, 0)
+    firetouchinterest(lp.Character.Head, part, 1)
 end
 
 function getRoot(char)
@@ -64,7 +62,7 @@ function autoEat()
     spawn(function () 
         while wait() do
             if not getgenv().autoEat then break end
-            remote.Eat:FireServer()
+            rm.Eat:FireServer()
         end
     end)
 end
@@ -73,7 +71,7 @@ function autoSell()
     spawn(function () 
         while wait() do
             if not getgenv().autoSell then break end
-            touchInterest(workspace.SELL.Pad)
+            touchInterest(ws.SELL.Pad)
         end
     end)
 end
@@ -82,7 +80,7 @@ function autoCoins()
     spawn(function () 
         while wait() do
             if not getgenv().autoCoins then break end
-            touchInterest(workspace.Giver)
+            touchInterest(ws.Giver)
         end
     end)
 end
@@ -91,7 +89,7 @@ function autoKing()
     spawn(function () 
         while wait() do
             if not getgenv().autoKing then break end
-            touchInterest(workspace.King.Area)
+            touchInterest(ws.King.Area)
         end
     end)
 end
@@ -100,7 +98,7 @@ function autoRank()
     spawn(function () 
         while wait() do
             if not getgenv().autoRank then break end
-            remote.UpgradeRank:FireServer()
+            rm.UpgradeRank:FireServer()
         end
     end)
 end
@@ -110,7 +108,7 @@ function autoPunch()
     spawn(function () 
         while wait() do
             if not getgenv().autoPunch then break end
-            remote.Action:FireServer('Punch')
+            rm.Action:FireServer('Punch')
         end
     end)
 end
@@ -119,7 +117,7 @@ function autoStomp()
     spawn(function () 
         while wait() do
             if not getgenv().autoStomp then break end
-            remote.Action:FireServer('Stomp')
+            rm.Action:FireServer('Stomp')
         end
     end)
 end
@@ -128,7 +126,7 @@ function autoDevour()
     spawn(function () 
         while wait() do
             if not getgenv().autoDevour then break end
-            remote.Action:FireServer('Devour')
+            rm.Action:FireServer('Devour')
         end
     end)
 end
@@ -137,7 +135,7 @@ function autoBellyFlop()
     spawn(function () 
         while wait() do
             if not getgenv().autoBellyFlop then break end
-            remote.Action:FireServer('Belly Flop')
+            rm.Action:FireServer('Belly Flop')
         end
     end)
 end
@@ -148,15 +146,15 @@ function autoTpKill()
             if getgenv().autoTpKill then
                 for i, v in pairs(game.Players:GetPlayers()) do
                     if not getgenv().autoTpKill then break end
-                    if v.Name ~= player.Name then
-                        local playerLoaded = player.Character or player.CharacterAdded:Wait()
+                    if v.Name ~= lp.Name then
+                        local playerLoaded = lp.Character or lp.CharacterAdded:Wait()
                         local playerHumanoidLoaded = playerLoaded:WaitForChild('Humanoid')
                         repeat wait()
-                        remote.Action:FireServer('Punch')
+                        rm.Action:FireServer('Punch')
                         if v.Character ~= nil and playerHumanoidLoaded and v.Character.HumanoidRootPart ~= nil then 
-                            player.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,0)
+                            lp.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,0)
                         end
-                        until v.Character == nil or v.Character.Humanoid.Health <= 0 or v.Character.HumanoidRootPart.CFrame == nil or player.Character.HumanoidRootPart.CFrame == nil or getgenv().autoTpKill == false
+                        until v.Character == nil or v.Character.Humanoid.Health <= 0 or v.Character.HumanoidRootPart.CFrame == nil or lp.Character.HumanoidRootPart.CFrame == nil or getgenv().autoTpKill == false
                         totalPlayersKilled += 1
                         print(totalPlayersKilled)
                     else
@@ -217,7 +215,7 @@ farming:Toggle('Auto Rank',function(bool)
 end)
 
 farming:Button('Buy Lucky Block',function()
-    remote.BuyLucky:FireServer(5)
+    rm.BuyLucky:FireServer(5)
 end)
 
 
@@ -253,7 +251,7 @@ fighting:Toggle('Auto TP Kill',function(bool)
     getgenv().autoTpKill = bool
     if bool then 
         autoTpKill();
-        player.CharacterAdded:connect(function()
+        lp.CharacterAdded:connect(function()
             autoTpKill();
         end)
     end
@@ -264,53 +262,53 @@ fighting:Button('Set low hipheight',function()
 end)
 
 destroy:Button('DESTROY EVERYTHING',function()
-    if workspace.World then
-        workspace.World:Destroy()
+    if ws.World then
+        ws.World:Destroy()
     end
-    if workspace.Edible then
-        workspace.Edible:Destroy()
+    if ws.Edible then
+        ws.Edible:Destroy()
     end
 end)
 
 destroy:Button('Sell pads',function()
-    if workspace.SELL then
-        workspace.SELL:Destroy()
+    if ws.SELL then
+        ws.SELL:Destroy()
     end
 end)
 
 destroy:Button('Buy pads',function()
-    if workspace.BUY then
-        workspace.BUY:Destroy()
+    if ws.BUY then
+        ws.BUY:Destroy()
     end
 end)
 
 destroy:Button('Rank / Skin pads',function()
-    if workspace.OTHER then
-        workspace.OTHER:Destroy()
+    if ws.OTHER then
+        ws.OTHER:Destroy()
     end
 end)
 
 destroy:Button('QuestGiver',function()
-    if workspace.QuestGiver then
-        workspace.QuestGiver:Destroy()
+    if ws.QuestGiver then
+        ws.QuestGiver:Destroy()
     end
 end)
 
 destroy:Button('Portals',function()
-    if workspace.MGNPortals then
-        workspace.MGNPortals:Destroy()
+    if ws.MGNPortals then
+        ws.MGNPortals:Destroy()
     end
 end)
 
 destroy:Button('Barriers',function()
-    if workspace.MGNPortals then
-        workspace.Barriers:Destroy()
+    if ws.MGNPortals then
+        ws.Barriers:Destroy()
     end
 end)
 
 destroy:Button('Safezone',function()
-    if workspace.Safezone then
-        workspace.Safezone:Destroy()
+    if ws.Safezone then
+        ws.Safezone:Destroy()
     end
 end)
 
@@ -334,7 +332,7 @@ end)
 
 misc:Button('Redeem All Codes',function()
     for i, v in pairs(codes) do
-        remote.Code:FireServer(v.toUpperCase())
+        rm.Code:FireServer(v.toUpperCase())
         print(v)
     end
 end)
@@ -343,11 +341,11 @@ misc:DestroyGui()
 
 -- local T = getRoot(Players.LocalPlayer.Character)
 
--- local c=workspace.CurrentCamera.CFrame
+-- local c=ws.CurrentCamera.CFrame
 -- for i,v in pairs(game.Players:GetPlayers()) do
 --     if v.Name:lower() == 'bartvanmV2' then
 --         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0,-100,0)
---         workspace.CurrentCamera.CFrame=c*CFrame.Angles(math.rad(v.Character.HumanoidRootPart.CFrame.LookVector.X),math.rad(v.Character.HumanoidRootPart.CFrame.LookVector.Y),0)
+--         ws.CurrentCamera.CFrame=c*CFrame.Angles(math.rad(v.Character.HumanoidRootPart.CFrame.LookVector.X),math.rad(v.Character.HumanoidRootPart.CFrame.LookVector.Y),0)
 --     end
 -- end
 -- FLYING = true
