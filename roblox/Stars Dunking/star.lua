@@ -28,7 +28,8 @@ function autoDunk()
             lp.Character.Humanoid.WalkSpeed = 100
             lp.Character.HumanoidRootPart.CFrame = ws.BlueGoal1.Score.CFrame + Vector3.new(getgenv().autoDunkDistance,-10,0)
             lp.Character.HumanoidRootPart.Anchored = false        
-            wait(0.5) 
+            wait(0.5)
+            lp.Character.HumanoidRootPart.CFrame = ws.BlueGoal1.Score.CFrame + Vector3.new(getgenv().autoDunkDistance,-10,0) 
             lp.Character.Ball.ServerEvent:FireServer('Accuracy', 1)
             lp.Character.Ball.ServerEvent:FireServer('Start')
             wait(1)
@@ -159,5 +160,3 @@ end)
 d:Button('Teleporters',function()
     if ws.Teleporters then ws.Teleporters:Destroy() end
 end)
-
-
