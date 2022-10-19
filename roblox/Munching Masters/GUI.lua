@@ -16,13 +16,15 @@ getgenv().autoKing      = false
 getgenv().autoRank      = false
 getgenv().autoTpKill    = false
 
+local data = game:GetService('ReplicatedStorage').Functions.Data.GetPlayer:InvokeServer()
+
 -- locals
 local totalPlayersKilled = 0
 
 -- Paths
-local remote = game:GetService("ReplicatedStorage").Events.Player
-local workspace = game:GetService("Workspace")
-local actionModule = require(game:GetService("Players").LocalPlayer.PlayerScripts.Client.Action)
+local remote = game:GetService('ReplicatedStorage').Events.Player
+local workspace = game:GetService('Workspace')
+local actionModule = require(game:GetService('Players').LocalPlayer.PlayerScripts.Client.Action)
 
 -- Player
 local player = game.Players.LocalPlayer
@@ -46,7 +48,7 @@ function getRoot(char)
 end
 
 function tools(plr)
-	if plr:FindFirstChildOfClass("Backpack"):FindFirstChildOfClass('Tool') or plr.Character:FindFirstChildOfClass('Tool') then
+	if plr:FindFirstChildOfClass('Backpack'):FindFirstChildOfClass('Tool') or plr.Character:FindFirstChildOfClass('Tool') then
 		return true
 	end
 end
@@ -148,7 +150,7 @@ function autoTpKill()
                     if not getgenv().autoTpKill then break end
                     if v.Name ~= player.Name then
                         local playerLoaded = player.Character or player.CharacterAdded:Wait()
-                        local playerHumanoidLoaded = playerLoaded:WaitForChild("Humanoid")
+                        local playerHumanoidLoaded = playerLoaded:WaitForChild('Humanoid')
                         repeat wait()
                         remote.Action:FireServer('Punch')
                         if v.Character ~= nil and playerHumanoidLoaded and v.Character.HumanoidRootPart ~= nil then 
@@ -170,84 +172,84 @@ end
 -- Library
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
 
-local w = library:CreateWindow("Munching Meister!") -- Creates the window
+local w = library:CreateWindow('Munching Meister!') -- Creates the window
 
-local farming = w:CreateFolder("Farming")
-local fighting = w:CreateFolder("Fighting")
-local teleport = w:CreateFolder("Teleport")
-local destroy = w:CreateFolder("Destroy")
-local misc = w:CreateFolder("Miscellaneous")
-local credits = w:CreateFolder("Credits")
+local farming = w:CreateFolder('Farming')
+local fighting = w:CreateFolder('Fighting')
+local teleport = w:CreateFolder('Teleport')
+local destroy = w:CreateFolder('Destroy')
+local misc = w:CreateFolder('Miscellaneous')
+local credits = w:CreateFolder('Credits')
 
-farming:Toggle("Auto Eat",function(bool)
+farming:Toggle('Auto Eat',function(bool)
     getgenv().autoEat = bool
     if bool then 
         autoEat()
     end
 end)
 
-farming:Toggle("Auto Sell",function(bool)
+farming:Toggle('Auto Sell',function(bool)
     getgenv().autoSell = bool
     if bool then 
         autoSell();
     end
 end)
 
-farming:Toggle("Auto Coins",function(bool)
+farming:Toggle('Auto Coins',function(bool)
     getgenv().autoCoins = bool
     if bool then 
         autoCoins();
     end
 end)
 
-farming:Toggle("Auto King",function(bool)
+farming:Toggle('Auto King',function(bool)
     getgenv().autoKing = bool
     if bool then 
         autoKing();
     end
 end)
 
-farming:Toggle("Auto Rank",function(bool)
+farming:Toggle('Auto Rank',function(bool)
     getgenv().autoRank = bool
     if bool then 
         autoRank();
     end
 end)
 
-farming:Button("Buy Lucky Block",function()
+farming:Button('Buy Lucky Block',function()
     remote.BuyLucky:FireServer(5)
 end)
 
 
-fighting:Toggle("Auto Punch",function(bool)
+fighting:Toggle('Auto Punch',function(bool)
     getgenv().autoPunch = bool
     if bool then 
         autoPunch();
     end
 end)
 
-fighting:Toggle("Auto Stomp",function(bool)
+fighting:Toggle('Auto Stomp',function(bool)
     getgenv().autoStomp = bool
     if bool then 
         autoStomp();
     end
 end)
 
-fighting:Toggle("Auto Devour",function(bool)
+fighting:Toggle('Auto Devour',function(bool)
     getgenv().autoDevour = bool
     if bool then 
         autoDevour();
     end
 end)
 
-fighting:Toggle("Auto Belly",function(bool)
+fighting:Toggle('Auto Belly',function(bool)
     getgenv().autoBellyFlop = bool
     if bool then 
         autoBellyFlop();
     end
 end)
 
-fighting:Toggle("Auto TP Kill",function(bool)
+fighting:Toggle('Auto TP Kill',function(bool)
     getgenv().autoTpKill = bool
     if bool then 
         autoTpKill();
@@ -257,11 +259,11 @@ fighting:Toggle("Auto TP Kill",function(bool)
     end
 end)
 
-fighting:Button("Set low hipheight",function()
+fighting:Button('Set low hipheight',function()
 
 end)
 
-destroy:Button("DESTROY EVERYTHING",function()
+destroy:Button('DESTROY EVERYTHING',function()
     if workspace.World then
         workspace.World:Destroy()
     end
@@ -270,51 +272,51 @@ destroy:Button("DESTROY EVERYTHING",function()
     end
 end)
 
-destroy:Button("Sell pads",function()
+destroy:Button('Sell pads',function()
     if workspace.SELL then
         workspace.SELL:Destroy()
     end
 end)
 
-destroy:Button("Buy pads",function()
+destroy:Button('Buy pads',function()
     if workspace.BUY then
         workspace.BUY:Destroy()
     end
 end)
 
-destroy:Button("Rank / Skin pads",function()
+destroy:Button('Rank / Skin pads',function()
     if workspace.OTHER then
         workspace.OTHER:Destroy()
     end
 end)
 
-destroy:Button("QuestGiver",function()
+destroy:Button('QuestGiver',function()
     if workspace.QuestGiver then
         workspace.QuestGiver:Destroy()
     end
 end)
 
-destroy:Button("Portals",function()
+destroy:Button('Portals',function()
     if workspace.MGNPortals then
         workspace.MGNPortals:Destroy()
     end
 end)
 
-destroy:Button("Barriers",function()
+destroy:Button('Barriers',function()
     if workspace.MGNPortals then
         workspace.Barriers:Destroy()
     end
 end)
 
-destroy:Button("Safezone",function()
+destroy:Button('Safezone',function()
     if workspace.Safezone then
         workspace.Safezone:Destroy()
     end
 end)
 
-misc:Button("Rejoin server",function()
-    local TeleportService = game:GetService("TeleportService")
-    local Players = game:GetService("Players")
+misc:Button('Rejoin server',function()
+    local TeleportService = game:GetService('TeleportService')
+    local Players = game:GetService('Players')
     local LocalPlayer = Players.LocalPlayer
     
     local Rejoin = coroutine.create(function()
@@ -330,7 +332,7 @@ misc:Button("Rejoin server",function()
     coroutine.resume(Rejoin)
 end)
 
-misc:Button("Redeem All Codes",function()
+misc:Button('Redeem All Codes',function()
     for i, v in pairs(codes) do
         remote.Code:FireServer(v.toUpperCase())
         print(v)
@@ -343,7 +345,7 @@ misc:DestroyGui()
 
 -- local c=workspace.CurrentCamera.CFrame
 -- for i,v in pairs(game.Players:GetPlayers()) do
---     if v.Name:lower() == "bartvanmV2" then
+--     if v.Name:lower() == 'bartvanmV2' then
 --         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.Character.HumanoidRootPart.CFrame * CFrame.new(0,-100,0)
 --         workspace.CurrentCamera.CFrame=c*CFrame.Angles(math.rad(v.Character.HumanoidRootPart.CFrame.LookVector.X),math.rad(v.Character.HumanoidRootPart.CFrame.LookVector.Y),0)
 --     end
