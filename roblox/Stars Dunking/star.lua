@@ -1,8 +1,6 @@
 repeat wait() until game:IsLoaded() and game.Players and game.Players.LocalPlayer and game.Players.LocalPlayer.Character
--- Values 
-getgenv().autoDunkDistance = 10
-
 -- Booleans
+getgenv().autoStats = false
 getgenv().autoDunk = false
 getgenv().autoUpgrade = false
 getgenv().autoBalls = false
@@ -14,31 +12,90 @@ getgenv().autoContest = false
 -- Paths
 local lp = game.Players.LocalPlayer
 local ws = game:GetService('Workspace')
-local serverEvent = game:GetService("ReplicatedStorage").ServerEvent
+local rs = game:GetService("ReplicatedStorage")
+local serverEvent = rs.ServerEvent
 -- Arrays
 local balls = {'Default', 'Allstar', 'Grass', 'Tennis', 'Moon', 'Magma', 'Water', 'Fire', 'White Fire', 'Black Fire', 'Blue Fire', 'Galaxy', 'Blue Orb', 'White Orb', 'Black Orb', 'Ruby Orb', 'Gold', 'Amethyst', 'Gloomy', 'Fire & Ice'}
 local jerseys = {'Default', 'Classic', 'Abstract', 'Hearts', 'Sprinkles', 'Checkerboard', 'Floral', 'Jacko', 'Snowflakes', 'Allstar', 'Sapphire', 'Emerald', 'Ruby', 'Diamond', 'Galaxy', 'Gold', 'Amethyst', 'Gloomy', 'Fire & Ice'}
 local shoes = {'Default', 'Basketball', 'Cow', 'Cloudy', 'Smiley', 'Santa', 'Pink Camo', 'Magma', 'Minecraft', 'Money', 'Lightning', 'Allstar', 'Sapphire', 'Emerald', 'Ruby', 'Diamond', 'Galaxy', 'Gold', 'Amethyst', 'Gloomy', 'Fire & Ice'}
+-- Values 
+local autoDunkDistance = 10
 
--- functions
+-- Helper functions
+function getRoot(char)
+	local rootPart = char:FindFirstChild('HumanoidRootPart') or char:FindFirstChild('Torso') or char:FindFirstChild('UpperTorso')
+	return rootPart
+end
+
+function touchInterest(part)
+    firetouchinterest(game:GetService("Workspace").bartvanm.Ball, part, 0)
+    firetouchinterest(game:GetService("Workspace").bartvanm.Ball, part, 1)
+end
+
+function getAccuracy()
+    local accuracy = lp.leaderstats.Rebirths.Value * 15 + rs.Items.Jerseys[rs.Players.bartvanm.Equipped.Jerseys.Value].Accuracy.Value + rs.Items.Shoes[rs.Players.bartvanm.Equipped.Shoes.Value].Accuracy.Value
+    return accuracy
+end
+
+function calculateDistance(accuracy)
+    local distance = accuracy/4
+    return distance
+end
+
+function fly()
+	local T = getRoot(lp.Character)
+	local SPEED = 0
+	local function FLY()
+		FLYING = true
+		local BG = Instance.new('BodyGyro')
+		local BV = Instance.new('BodyVelocity')
+		BG.P = 9e4
+		BG.Parent = T
+		BV.Parent = T
+		BG.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+		BG.cframe = T.CFrame
+		BV.velocity = Vector3.new(0, 0, 0)
+		BV.maxForce = Vector3.new(9e9, 9e9, 9e9)
+		task.spawn(function()
+			repeat wait()
+				if lp.Character:FindFirstChildOfClass('Humanoid') then
+					lp.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
+				end
+                SPEED = 0
+                BV.velocity = Vector3.new(0, 0, 0)
+			until not FLYING
+			SPEED = 0
+			BG:Destroy()
+			BV:Destroy()
+			if lp.Character:FindFirstChildOfClass('Humanoid') then
+				lp.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+			end
+		end)
+	end
+end
+
+function nofly()
+	FLYING = false
+	if flyKeyDown or flyKeyUp then flyKeyDown:Disconnect() flyKeyUp:Disconnect() end
+	if lp.Character:FindFirstChildOfClass('Humanoid') then
+		lp.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+	end
+end
+
 function autoDunk()
     spawn(function () 
         while wait() do
             if not getgenv().autoDunk then lp.Character.HumanoidRootPart.Anchored = false break end
-            lp.Character.Humanoid.WalkSpeed = 100
-            lp.Character.HumanoidRootPart.CFrame = ws.BlueGoal1.Score.CFrame + Vector3.new(getgenv().autoDunkDistance,-10,0)
-            lp.Character.HumanoidRootPart.Anchored = false        
-            wait(0.5)
-            lp.Character.HumanoidRootPart.CFrame = ws.BlueGoal1.Score.CFrame + Vector3.new(getgenv().autoDunkDistance,-10,0) 
+            print(getAccuracy())
+            print(calculateDistance(getAccuracy()))
+            lp.Character.HumanoidRootPart.Anchored = false    
+            lp.Character.HumanoidRootPart.CFrame = ws.BlueGoal1.Score.CFrame + Vector3.new(calculateDistance(getAccuracy()),9999,0)
             lp.Character.Ball.ServerEvent:FireServer('Accuracy', 1)
             lp.Character.Ball.ServerEvent:FireServer('Start')
-            wait(1)
-            for i=1,5 do
-                lp.Character.HumanoidRootPart.CFrame = ws.BlueGoal1.Score.CFrame + Vector3.new(0,-1,0)
-                wait(0.2)
-                lp.Character.HumanoidRootPart.Anchored = true
+            for i=1,100 do
+                touchInterest(ws.BlueGoal1.Score)
             end
-            
+            wait(0.01)
         end
     end)
 end
@@ -101,9 +158,31 @@ end
 local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
 
 local w = library:CreateWindow('DUNKING MEISTER') 
+local s = w:CreateFolder('Statistics😽')
+local f = w:CreateFolder('Farm👨‍🌾')
+local m = w:CreateFolder('Player🙉')
+local d = w:CreateFolder('Demolish💥') 
 
-local f = w:CreateFolder('farm👨‍🌾')
-local d = w:CreateFolder('Demolish💥')
+s:Toggle('Auto Stats',function(bool)
+    getgenv().autoStats = bool
+    if bool then 
+        autoStats()
+    end
+end)
+-- suggestedAutoDunkDistance:Refresh(suggestedAutoDunkDistance)
+-- local suggestedAutoDunkDistance = s:Label("Pretty Useless NGL",{
+--     TextSize = 25 -- Self Explaining
+--     TextColor = Color3.fromRGB(255,255,255)
+--     BgColor = Color3.fromRGB(69,69,69)
+-- })
+-- s:NewLabel("Suggested distance:", suggestedAutoDunkDistance)
+-- s:NewLabel("Accuracy:", Accuracy)
+-- s:Toggle('Loop Stats',function(bool)
+--     getgenv().autoDunk = bool
+--     if bool then 
+--         autoDunk()
+--     end
+-- end)
 
 f:Toggle('Auto Dunk',function(bool)
     getgenv().autoDunk = bool
@@ -114,11 +193,10 @@ end)
 
 f:Slider('Auto Dunk Distance',{
     min = 10,
-    max = 500,
+    max = 700,
     precise = false
 },function(value)
-    getgenv().autoDunkDistance = value 
-    print(autoDunkDistance)
+    autoDunkDistance = value 
 end)
 
 f:Toggle('Auto Upgrade',function(bool)
@@ -156,6 +234,13 @@ f:Toggle('Auto Rebirth',function(bool)
     end
 end)
 
+m:Button('Fly',function()
+    fly()
+end)
+
+m:Button('Nofly',function()
+    nofly()
+end)
 
 d:Button('Teleporters',function()
     if ws.Teleporters then ws.Teleporters:Destroy() end
