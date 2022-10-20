@@ -28,12 +28,12 @@ function getRoot(char)
 end
 
 function touchInterest(part)
-    firetouchinterest(game:GetService("Workspace").LocalPlayer.Ball, part, 0)
-    firetouchinterest(game:GetService("Workspace").LocalPlayer.Ball, part, 1)
+    firetouchinterest(game:GetService("Workspace").bartvanm.Ball, part, 0)
+    firetouchinterest(game:GetService("Workspace").bartvanm.Ball, part, 1)
 end
 
 function getAccuracy()
-    local accuracy = lp.leaderstats.Rebirths.Value * 15 + rs.Items.Jerseys[rs.Players.LocalPlayer.Equipped.Jerseys.Value].Accuracy.Value + rs.Items.Shoes[rs.Players.LocalPlayer.Equipped.Shoes.Value].Accuracy.Value
+    local accuracy = lp.leaderstats.Rebirths.Value * 15 + rs.Items.Jerseys[rs.Players.bartvanm.Equipped.Jerseys.Value].Accuracy.Value + rs.Items.Shoes[rs.Players.bartvanm.Equipped.Shoes.Value].Accuracy.Value
     return accuracy
 end
 
@@ -87,7 +87,7 @@ function autoDunk()
         while wait() do
             if not getgenv().autoDunk then lp.Character.HumanoidRootPart.Anchored = false break end
             lp.Character.HumanoidRootPart.Anchored = false    
-            lp.Character.HumanoidRootPart.CFrame = ws.BlueGoal1.Score.CFrame + Vector3.new(calculateDistance(getAccuracy()),9999,0)
+            lp.Character.HumanoidRootPart.CFrame = ws.BlueGoal1.Score.CFrame + Vector3.new(autoDunkDistance,0,0)
             lp.Character.Ball.ServerEvent:FireServer('Accuracy', 1)
             lp.Character.Ball.ServerEvent:FireServer('Start')
             for i=1,100 do
@@ -113,6 +113,7 @@ function autoBalls()
             if not getgenv().autoBalls then break end
             for i, v in pairs(balls) do
                 serverEvent:FireServer('Buy', 'Balls', v)
+                serverEvent:FireServer('Equip', 'Balls', 'Fire & Ice')
                 wait(0.1)
             end
         end
@@ -191,7 +192,7 @@ end)
 
 f:Slider('Auto Dunk Distance',{
     min = 10,
-    max = 700,
+    max = 10000,
     precise = false
 },function(value)
     autoDunkDistance = value 
