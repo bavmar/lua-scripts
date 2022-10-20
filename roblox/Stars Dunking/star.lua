@@ -28,12 +28,12 @@ function getRoot(char)
 end
 
 function touchInterest(part)
-    firetouchinterest(game:GetService("Workspace").bartvanm.Ball, part, 0)
-    firetouchinterest(game:GetService("Workspace").bartvanm.Ball, part, 1)
+    firetouchinterest(game:GetService("Workspace").LocalPlayer.Ball, part, 0)
+    firetouchinterest(game:GetService("Workspace").LocalPlayer.Ball, part, 1)
 end
 
 function getAccuracy()
-    local accuracy = lp.leaderstats.Rebirths.Value * 15 + rs.Items.Jerseys[rs.Players.bartvanm.Equipped.Jerseys.Value].Accuracy.Value + rs.Items.Shoes[rs.Players.bartvanm.Equipped.Shoes.Value].Accuracy.Value
+    local accuracy = lp.leaderstats.Rebirths.Value * 15 + rs.Items.Jerseys[rs.Players.LocalPlayer.Equipped.Jerseys.Value].Accuracy.Value + rs.Items.Shoes[rs.Players.LocalPlayer.Equipped.Shoes.Value].Accuracy.Value
     return accuracy
 end
 
@@ -86,8 +86,6 @@ function autoDunk()
     spawn(function () 
         while wait() do
             if not getgenv().autoDunk then lp.Character.HumanoidRootPart.Anchored = false break end
-            print(getAccuracy())
-            print(calculateDistance(getAccuracy()))
             lp.Character.HumanoidRootPart.Anchored = false    
             lp.Character.HumanoidRootPart.CFrame = ws.BlueGoal1.Score.CFrame + Vector3.new(calculateDistance(getAccuracy()),9999,0)
             lp.Character.Ball.ServerEvent:FireServer('Accuracy', 1)
