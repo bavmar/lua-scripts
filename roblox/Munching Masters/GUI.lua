@@ -36,8 +36,8 @@ local codes = {'food', '50m', 'hungry', '2m', 'release', 'scotty', 'tofuu', 'BAR
 
 -- Helper Functions
 function touchInterest(part)
-    firetouchinterest(lp.Character.Head, part, 0)
-    firetouchinterest(lp.Character.Head, part, 1)
+    firetouchinterest(lp.Character.HumanoidRootPart, part, 0)
+    firetouchinterest(lp.Character.HumanoidRootPart, part, 1)
 end
 
 function getRoot(char)
@@ -122,7 +122,7 @@ function autoStomp()
     end)
 end
 
-function autoDevour() 
+function autoDevour()  
     spawn(function () 
         while wait() do
             if not getgenv().autoDevour then break end
