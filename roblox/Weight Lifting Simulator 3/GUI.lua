@@ -1270,7 +1270,6 @@ CloseTPKILL.MouseButton1Down:connect(function()
 end)
 
 OpenTP_2.MouseButton1Down:connect(function()
-warn('xd')
 bin=Instance.new("HopperBin",game.Players.LocalPlayer.Backpack)
 bin.Name = "Teleport"
 
