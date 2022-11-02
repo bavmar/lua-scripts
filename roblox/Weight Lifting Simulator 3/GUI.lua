@@ -1087,7 +1087,7 @@ CloseStrength.Visible = true
 toggleStrength = true
 
 while toggleStrength do
-	wait(0.001)
+	wait(tick())
 	local name = game.Players.LocalPlayer.Name
 	local rep = "rep"
 	local remote = game:GetService("Players")[name].strengthEvent
